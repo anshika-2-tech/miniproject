@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>QUICKMED</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+      /* Additional Styling for Recommendations */
+      .doctor {
+        padding: 10px;
+        border: 1px solid #e5e7eb; /* Light gray border */
+        border-radius: 8px;
+        margin-bottom: 15px; /* Space between recommendations */
+        background-color: #f9fafb; /* Slight background for separation */
+      }
+      .doctor h3 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1e3a8a; /* Highlighted in blue */
+      }
+    </style>
+  </head>
+  <body class="font-roboto bg-gray-100">
+    <header class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">QUICKMED</h1>
+      </div>
+    </header>
+
+    <section class="container mx-auto p-6 mt-6" id="nearby-doctors">
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold mb-4 text-blue-600">Nearby Doctors</h2>
+        <button
+          class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700"
+          onclick="requestLocationPermission()"
+        >
+          Allow Location Access
+        </button>
+        <div id="map" class="rounded-lg shadow-md mt-6" style="height: 400px;"></div>
+        <div id="results" class="space-y-8 mt-6">
+          <h3 class="text-lg font-bold mb-2">Recommended Doctors</h3>
+          <div id="doctor-list" class="text-gray-700">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bg-blue-600 text-white p-4 mt-6">
+      <div class="container mx-auto text-center">
+        <p>© 2025 Medical Diagnosis and Assistance. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      let map;
+
+      function requestLocationPermission() {
+        console.log("Requesting location access...");
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              console.log("Location access granted:", position.coords);
+              initMap(position.coords.latitude, position.coords.longitude);
+            },
+            function (error) {
+              console.error("Location access denied:", error.message);
+              alert("Location access denied. Unable to show nearby locations.");
+            }
+          );
+        } else {
+          alert("Geolocation is not supported by this browser.");
+          console.error("Geolocation API not supported.");
+        }
+      }
+
+      function initMap(lat, lng) {
+        console.log("Initializing map at location:", { lat, lng });
+        const userLocation = { lat: lat, lng: lng };
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: userLocation,
+          zoom: 15,
+        });
+
+        new google.maps.Marker({
+          position: userLocation,
+          map: map,
+          title: "You are here",
+        });
+
+        findNearbyDoctors(userLocation);
+      }
+
+      function findNearbyDoctors(location) {
+        console.log("Finding nearby doctors...");
+        const request = {
+          location: location,
+          radius: 5000,
+          type: "doctor",
+        };
+
+        const service = new google.maps.places.PlacesService(map);
+        service.nearbySearch(request, (results, status) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            console.log("Doctors found:", results);
+            displayDoctors(results);
+          } else {
+            console.error("No doctors found:", status);
+            alert("No doctors found nearby.");
+          }
+        });
+      }
+
+      function displayDoctors(results) {
+        const doctorList = document.getElementById("doctor-list");
+        doctorList.innerHTML = "";
+        results.forEach((place) => {
+          const doctorDiv = document.createElement("div");
+          doctorDiv.classList.add("doctor");
+          doctorDiv.innerHTML = `
+            <h3>${place.name}</h3>
+            <p>${place.vicinity}</p>
+            <p>Rating: ${place.rating || "N/A"}</p>
+          `;
+          doctorList.appendChild(doctorDiv);
+        });
+      }
+    </script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUXT4GpQWGHD4HQqe8454mX_7vCe4eVXs&libraries=places"
+      async
+      defer
+    ></script>
+  </body>
+</html>

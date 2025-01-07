@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>QUICKMED</title>
+    
+    <!-- Tailwind CSS and other resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
+    <script>
+      // Function to update the clock
+      function updateClock() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        const date = now.toLocaleDateString();
+
+        document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds} | ${date}`;
+      }
+
+      // Call the updateClock function every second
+      setInterval(updateClock, 1000);
+
+      // Sample data for diseases
+      const diseases = [
+  {
+    disease: "Common Cold",
+    symptoms: ["cough", "fever", "sneezing", "runny nose"],
+    remedies: "Stay hydrated, get plenty of rest, and avoid cold beverages."
+  },
+  {
+    disease: "Influenza (Flu)",
+    symptoms: ["high fever", "body aches", "fatigue", "dry cough"],
+    remedies: "Take antiviral medications, rest, and stay hydrated."
+  },
+  {
+    disease: "Asthma",
+    symptoms: ["shortness of breath", "wheezing", "coughing", "chest tightness"],
+    remedies: "Use prescribed inhalers and avoid allergens."
+  },
+  {
+    disease: "Diabetes",
+    symptoms: ["frequent urination", "excessive thirst", "unexplained weight loss"],
+    remedies: "Maintain a healthy diet, exercise regularly, and monitor blood sugar levels."
+  },
+  {
+    disease: "Hypertension",
+    symptoms: ["headache", "blurred vision", "shortness of breath"],
+    remedies: "Reduce salt intake, exercise, and manage stress."
+  },
+  {
+    disease: "Malaria",
+    symptoms: ["high fever", "chills", "sweating", "nausea"],
+    remedies: "Take antimalarial drugs and use mosquito nets."
+  },
+  {
+    disease: "Tuberculosis",
+    symptoms: ["persistent cough", "weight loss", "night sweats", "fever"],
+    remedies: "Complete the full course of antibiotics prescribed by a doctor."
+  },
+  {
+    disease: "Typhoid",
+    symptoms: ["high fever", "abdominal pain", "weakness", "loss of appetite"],
+    remedies: "Stay hydrated, follow a bland diet, and take antibiotics."
+  },
+  {
+    disease: "Dengue",
+    symptoms: ["high fever", "severe headache", "joint pain", "rash"],
+    remedies: "Drink plenty of fluids and use paracetamol for fever."
+  },
+  {
+    disease: "Chickenpox",
+    symptoms: ["itchy rash", "fever", "fatigue", "loss of appetite"],
+    remedies: "Use calamine lotion, avoid scratching, and rest."
+  },
+  {
+    disease: "COVID-19",
+    symptoms: ["fever", "cough", "loss of taste or smell", "shortness of breath"],
+    remedies: "Isolate, rest, and stay hydrated. Consult a doctor if symptoms worsen."
+  },
+  {
+    disease: "Bronchitis",
+    symptoms: ["persistent cough", "mucus production", "shortness of breath"],
+    remedies: "Use steam inhalation and stay hydrated."
+  },
+  {
+    disease: "Pneumonia",
+    symptoms: ["chest pain", "fever", "shortness of breath", "cough with phlegm"],
+    remedies: "Take prescribed antibiotics and rest."
+  },
+  {
+    disease: "Arthritis",
+    symptoms: ["joint pain", "stiffness", "swelling", "reduced mobility"],
+    remedies: "Exercise, use heat or cold therapy, and take anti-inflammatory medications."
+  },
+  {
+    disease: "Migraine",
+    symptoms: ["intense headache", "sensitivity to light", "nausea", "blurred vision"],
+    remedies: "Avoid triggers, rest in a dark room, and take prescribed medications."
+  },
+  {
+    disease: "Acid Reflux",
+    symptoms: ["heartburn", "regurgitation", "chest pain"],
+    remedies: "Avoid spicy foods, eat small meals, and elevate the head while sleeping."
+  },
+  {
+    disease: "Constipation",
+    symptoms: ["infrequent bowel movements", "hard stools", "abdominal pain"],
+    remedies: "Increase fiber intake, drink plenty of water, and exercise regularly."
+  },
+  {
+    disease: "Urinary Tract Infection (UTI)",
+    symptoms: ["burning sensation during urination", "frequent urination", "cloudy urine"],
+    remedies: "Drink cranberry juice, stay hydrated, and take antibiotics if prescribed."
+  },
+  {
+    disease: "Eczema",
+    symptoms: ["dry skin", "itching", "red patches"],
+    remedies: "Use moisturizing creams and avoid harsh soaps."
+  },
+  {
+    disease: "Allergic Rhinitis",
+    symptoms: ["sneezing", "runny nose", "itchy eyes", "nasal congestion"],
+    remedies: "Avoid allergens, use antihistamines, and try nasal sprays."
+  }
+];
+
+
+      // Function to handle search
+      function searchDisease(event) {
+        event.preventDefault();
+
+        const inputSymptoms = document
+          .getElementById("symptoms")
+          .value.split(",")
+          .map((s) => s.trim().toLowerCase());
+
+        const results = diseases.filter((disease) =>
+          inputSymptoms.some((symptom) =>
+            disease.symptoms.map((s) => s.toLowerCase()).includes(symptom)
+          )
+        );
+
+        const resultsContainer = document.getElementById("results");
+        resultsContainer.innerHTML = "";
+
+        if (results.length > 0) {
+          results.forEach((result) => {
+            const resultDiv = document.createElement("div");
+            resultDiv.className = "p-4 bg-white rounded-lg shadow-md mb-4 border border-gray-200";
+            resultDiv.innerHTML = `
+              <h3 class="text-xl font-bold text-blue-600">${result.disease}</h3>
+              <p class="text-sm text-gray-600"><strong>Symptoms:</strong> ${result.symptoms.join(", ")}</p>
+              <p class="text-sm text-gray-600"><strong>Remedies:</strong> ${result.remedies}</p>
+            `;
+            resultsContainer.appendChild(resultDiv);
+          });
+        } else {
+          resultsContainer.innerHTML =
+            '<p class="text-gray-500">No matching diseases found. Try again with different symptoms.</p>';
+        }
+        
+  
+      }
+    </script>
+  </head>
+  <body class="font-roboto bg-gray-100">
+    <header class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">QUICKMED</h1>
+        <div class="text-xl font-bold" id="clock">Loading...</div>
+      </div>
+    </header>
+    <section class="container mx-auto p-6" id="home">
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold mb-4 text-blue-600">Welcome to Medical Diagnosis and Assistance</h2>
+        <p class="mb-4 text-lg text-gray-700">
+          Enter your symptoms to get a diagnosis and find remedies and cures. You
+          can also find nearby doctors, hospitals, and emergency numbers.
+        </p>
+        <img
+          alt="A professional medical team ready to assist you"
+          class="w-full rounded-lg"
+          height="400"
+          src="https://storage.googleapis.com/a1aa/image/5PKfegmaSZouUEp7YO6Vkf2R7E5OX89UJkLdDGyacPANafDQB.jpg"
+          width="600"
+        />
+      </div>
+    </section>
+    <section class="container mx-auto p-6 mt-6" id="diagnosis">
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold mb-4 text-blue-600">Symptom Checker</h2>
+        <form class="space-y-4" onsubmit="searchDisease(event)">
+          <div>
+            <label class="block text-lg font-medium text-gray-700" for="symptoms">
+              Enter your symptoms:
+            </label>
+            <textarea
+              class="w-full p-2 border rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              id="symptoms"
+              placeholder="e.g., headache, fever, nausea"
+              rows="4"
+            ></textarea>
+          </div>
+          <button
+            class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            type="submit"
+          >
+            Get Diagnosis
+          </button>
+        </form>
+        <div id="results" class="space-y-4 mt-6"></div>
+      </div>
+    </section>
+
+    <!-- Nearby Doctors Section -->
+    <section class="container mx-auto p-6 mt-6" id="doctor">
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold mb-4 text-blue-600">Nearby Doctors And Hospitals</h2>
+        <a href="updated mini project SC.html" class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600" type="cta-button">Find Doctors And Hospitals</a>
+      </div>
+    </section>
+   
+    <!-- Emergency Numbers Section -->
+    <section class="container mx-auto p-6 mt-6" id="emergency">
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold mb-4 text-blue-600">Emergency Numbers</h2>
+        <ul class="space-y-4">
+          <li class="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-200">
+            <i class="fas fa-ambulance text-red-600 mr-3"></i><strong>Ambulance:</strong> 102
+          </li>
+          <li class="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-200">
+            <i class="fas fa-police text-blue-600 mr-3"></i><strong>Police:</strong> 100
+          </li>
+          <li class="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-200">
+            <i class="fas fa-fire text-orange-600 mr-3"></i><strong>Fire Services:</strong> 101
+          </li>
+          <li class="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-200">
+            <i class="fas fa-earthquake text-yellow-600 mr-3"></i><strong>Disaster Management:</strong> 108
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="bg-blue-600 text-white p-4 mt-6">
+      <div class="container mx-auto text-center">
+        <p>© 2023 Medical Diagnosis and Assistance. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
